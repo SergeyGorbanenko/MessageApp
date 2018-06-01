@@ -161,6 +161,8 @@ public class MainActivity extends AppCompatActivity {
         //создаем запрос
         AcceptanceCodeRequest acceptanceCodeRequest = new AcceptanceCodeRequest();
         acceptanceCodeRequest.sms_code = editTextPhoneEnter.getText().toString();
+        acceptanceCodeRequest.phone = phone;
+        acceptanceCodeRequest.uuid = uuid;
 
         //выполняем запрос
         Call<AcceptanceCodeResponse> sendAcceptanceCode = messServerApi.sendAcceptanceCode(acceptanceCodeRequest);
