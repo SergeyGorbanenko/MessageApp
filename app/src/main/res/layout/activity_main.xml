@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.MainActivity">
+
+    <Button
+        android:id="@+id/buttonLogin"
+        android:layout_width="107dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="158dp"
+        android:onClick="performLoginPhoneNumber"
+        android:text="Войти"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/idLabelLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="66dp"
+        android:text="Вход"
+        android:textColor="@android:color/background_dark"
+        android:textSize="30sp" />
+
+    <EditText
+        android:id="@+id/editTextPhoneEnter"
+        android:layout_width="164dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="185dp"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="@string/hintLogin1"
+        android:inputType="phone"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textViewInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="131dp"
+        android:text="@string/textLogin1"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/textViewPlus7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/editTextPhoneEnter"
+        android:layout_toStartOf="@+id/editTextPhoneEnter"
+        android:text="TextView"
+        android:textColor="@android:color/background_dark"
+        android:textSize="20sp"
+        tools:text="+7" />
+
+</RelativeLayout>

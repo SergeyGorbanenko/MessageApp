@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Сообщения банка</string>
+    <string name="edit_message">Введите сообщение</string>
+    <string name="send_message">Отправить</string>
+    <!--Nav-->
+    <string name="title_activity_nav">Сообщения банка</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Мобильный телефон</string>
+    <string name="nav_header_subtitle">номер на заполнен</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Настройки</string>
+    <!--Авторизация-->
+    <string name="textLogin1">Введите номер мобильного телефона</string>
+    <string name="textLogin2">\ \  \  \  \  Для подтверждения телефона,\nвведите код из ответного смс-сообщения</string>
+    <string name="textLogin4">Неверный код подтверждения</string>
+    <string name="hintLogin1">номер телефона</string>
+    <string name="hintLogin2">код подтверждения</string>
+
+
+    <string name="inDevelop">\ \ \ \ \ \ \ \ \ \Экран находится в разработке\nВоспользуйтесь панелью навигации слева</string>
+
+</resources>
