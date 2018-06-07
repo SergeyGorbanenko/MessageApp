@@ -1,6 +1,7 @@
 package com.bank.messageapp.activities;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +32,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RecycleActivity extends AppCompatActivity {
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -71,7 +74,8 @@ public class RecycleActivity extends AppCompatActivity {
         pushMessageList = localPushMessageDataSource.getAllPushMessages();
         //
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.pushmessage_recycler_view);
+        mSwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        mRecyclerView = findViewById(R.id.pushmessage_recycler_view);
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -97,8 +101,38 @@ public class RecycleActivity extends AppCompatActivity {
             }
         }));
 
+        //Подгрузили список с сервера
         getNewPushes(getCurrentFocus());
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Refresh items
+                refreshItems();
+            }
+        });
+
     }
+
+
+    void refreshItems() {
+        // Load items
+        // ...
+        getNewPushes(getCurrentFocus());
+
+        // Load complete
+        onItemsLoadComplete();
+    }
+
+    void onItemsLoadComplete() {
+        // Update the adapter and notify data set changed
+        // ...
+
+        // Stop refresh animation
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+
 
     public void getNewPushes(View v) {
 
