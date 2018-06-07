@@ -12,10 +12,10 @@
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Настройки" />
-        <item
+<!--        <item
             android:id="@+id/nav_testing"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Testing" />
+            android:title="Testing" />-->
     </group>
 
     <item android:title="Выйти из системы">

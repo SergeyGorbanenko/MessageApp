@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bank.messageapp.R;
+import com.bank.messageapp.datagenerator.DataGenerator;
 import com.bank.messageapp.persistence.AppDatabase;
 import com.bank.messageapp.persistence.datasource.LocalClientDataSource;
 import com.bank.messageapp.persistence.datasource.LocalClientServiceDataSource;
@@ -71,11 +72,11 @@ public class MainActivity extends AppCompatActivity {
         messServerApi = RetrofitBuilder.getInstance().create(MessServerApi.class);
 
         //Генерация данных в базу
-        //DataGenerator dataGenerator = new DataGenerator(this);
-        //dataGenerator.initGenerator();
+        DataGenerator dataGenerator = new DataGenerator(this);
+        dataGenerator.initGenerator();
         //dataGenerator.clearDB();
         //dataGenerator.ClientGeneration();
-        //dataGenerator.PushMessagesGeneration();
+        dataGenerator.PushMessagesGeneration("9237977175");
         //dataGenerator.isAuthorizedClientGeneration(false,);
 
 

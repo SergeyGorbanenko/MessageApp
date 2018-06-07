@@ -10,7 +10,7 @@ import android.view.View;
 import com.bank.messageapp.PushMessageListAdapter;
 import com.bank.messageapp.R;
 import com.bank.messageapp.persistence.AppDatabase;
-import com.bank.messageapp.persistence.dao.PushMessageDao;
+import com.bank.messageapp.persistence.datasource.LocalPushMessageDataSource;
 import com.bank.messageapp.persistence.entity.PushMessage;
 import com.bank.messageapp.util.MyItemDividerDecorator;
 import com.bank.messageapp.util.RecyclerTouchListener;
@@ -23,15 +23,16 @@ public class RecycleActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    private LocalPushMessageDataSource localPushMessageDataSource;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recycle);
 
         //
-        AppDatabase db = AppDatabase.getInstance(this);
-        PushMessageDao pushMessageDao = db.pushMessageDao();
-        List<PushMessage> pushMessageList = pushMessageDao.getAllPushMessages();
+        localPushMessageDataSource = new LocalPushMessageDataSource(AppDatabase.getInstance(this).pushMessageDao());
+        List<PushMessage> pushMessageList = localPushMessageDataSource.getAllPushMessages();
         //
 
         mRecyclerView = (RecyclerView) findViewById(R.id.pushmessage_recycler_view);
@@ -45,8 +46,7 @@ public class RecycleActivity extends AppCompatActivity {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new MyItemDividerDecorator(this, LinearLayoutManager.VERTICAL, 16));
 
-        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(this,
-                mRecyclerView, new RecyclerTouchListener.ClickListener() {
+        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, mRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, final int position) { }
 

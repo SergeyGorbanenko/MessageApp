@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bank.messageapp.R;
 import com.bank.messageapp.persistence.AppDatabase;
@@ -158,9 +159,9 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
         } else if (id == R.id.nav_setting) {
             //this.setTitle("Настройки");
 
-        } else if (id == R.id.nav_testing) {
+        /*} else if (id == R.id.nav_testing) {
             Intent intent = new Intent(this, TestingActivity.class);
-            startActivity(intent);
+            startActivity(intent);*/
         } else if (id == R.id.nav_logout) {     //реализовать выход из системы - по таблице - isAuthorized
 
             //создаем коннект к серверу
@@ -186,6 +187,7 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
                     } else {
                         System.out.println("RESPONSE CODE " + response.code());
                         //тут модальное окно
+                        Toast.makeText(getApplicationContext(), "Сервер не отвечает", Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -193,6 +195,7 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
                 public void onFailure(Call<LogoutResponse> call, Throwable t) {
                     System.out.println("FAILURE " + t);
                     //тут модальное окно
+                    Toast.makeText(getApplicationContext(), "Сервер не отвечает", Toast.LENGTH_LONG).show();
                 }
             });
 
