@@ -6,6 +6,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bank.messageapp.PushMessageListAdapter;
 import com.bank.messageapp.R;
@@ -83,10 +84,17 @@ public class RecycleActivity extends AppCompatActivity {
 
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, mRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
-            public void onClick(View view, final int position) { }
+            public void onClick(View view, final int position) {
+                Toast.makeText(getApplicationContext(), pushMessageList.get(position).getText_message(), Toast.LENGTH_SHORT).show();
+            }
 
             @Override
-            public void onLongClick(View view, int position) { }
+            public void onLongClick(View view, int position) {
+                Toast.makeText(getApplicationContext(), "Удалено одно сообщение", Toast.LENGTH_SHORT).show();
+                localPushMessageDataSource.deletePushMessage(pushMessageList.get(position));
+                pushMessageList.remove(position);
+                mAdapter.notifyItemRemoved(position);
+            }
         }));
 
         getNewPushes(getCurrentFocus());
@@ -105,17 +113,18 @@ public class RecycleActivity extends AppCompatActivity {
             public void onResponse(Call<List<PushResponse>> call, Response<List<PushResponse>> response) {
                 if (response.isSuccessful()) {
                     //
-                    if (response.body() != null) {
+                    if (!response.body().isEmpty()) {
                         for (PushResponse pushResponse : response.body()) {
                             PushMessage pushMessage = new PushMessage(pushResponse.push, pushResponse.date_delivered, false, client.getId_client());
                             localPushMessageDataSource.insertPushMessages(pushMessage);
                             pushMessageList.add(pushMessage);
-                            mAdapter.notifyItemChanged(mAdapter.getItemCount());
+                            mAdapter.notifyItemInserted(mAdapter.getItemCount());
                         }
                     }
                 } else {
                     System.out.println("Сервер не отвечает");
                     System.out.println("RESPONSE CODE " + response.code());
+                    Toast.makeText(getApplicationContext(), "Сервер не отвечает", Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -123,6 +132,7 @@ public class RecycleActivity extends AppCompatActivity {
             public void onFailure(Call<List<PushResponse>> call, Throwable t) {
                 System.out.println("Сервер не отвечает");
                 System.out.println("FAILURE " + t);
+                Toast.makeText(getApplicationContext(), "Сервер не отвечает", Toast.LENGTH_LONG).show();
             }
         });
 
