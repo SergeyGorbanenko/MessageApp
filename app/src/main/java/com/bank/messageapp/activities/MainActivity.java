@@ -74,9 +74,10 @@ public class MainActivity extends AppCompatActivity {
         //Генерация данных в базу
         DataGenerator dataGenerator = new DataGenerator(this);
         dataGenerator.initGenerator();
+
         //dataGenerator.clearDB();
         //dataGenerator.ClientGeneration();
-        dataGenerator.PushMessagesGeneration("9237977175");
+        //dataGenerator.PushMessagesGeneration("9237977175");
         //dataGenerator.isAuthorizedClientGeneration(false,);
 
 
@@ -126,9 +127,9 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     //
                     editTextPhoneEnter.setHint(R.string.hintLogin2);
-                    //editTextPhoneEnter.setText(null);                     --это пока закомент.
+                    editTextPhoneEnter.setText(null);
                     textViewInfo.setText(R.string.textLogin2);
-                    editTextPhoneEnter.setText(response.body().sms_code);   //сразу ввели код, полученный от сервера
+                    //editTextPhoneEnter.setText(response.body().sms_code);   //сразу ввели код, полученный от сервера
                     //
                     buttonLogin.setOnClickListener(v -> performLoginAcceptCode(v));
                     textViewPlus7.setVisibility(View.INVISIBLE);

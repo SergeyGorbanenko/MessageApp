@@ -10,12 +10,24 @@ import android.view.View;
 import com.bank.messageapp.PushMessageListAdapter;
 import com.bank.messageapp.R;
 import com.bank.messageapp.persistence.AppDatabase;
+import com.bank.messageapp.persistence.datasource.LocalClientDataSource;
+import com.bank.messageapp.persistence.datasource.LocalClientServiceDataSource;
 import com.bank.messageapp.persistence.datasource.LocalPushMessageDataSource;
+import com.bank.messageapp.persistence.entity.Client;
+import com.bank.messageapp.persistence.entity.ClientServiceData;
 import com.bank.messageapp.persistence.entity.PushMessage;
+import com.bank.messageapp.retrofit.PushRequest;
+import com.bank.messageapp.retrofit.PushResponse;
+import com.bank.messageapp.retrofit.core.MessServerApi;
+import com.bank.messageapp.retrofit.core.RetrofitBuilder;
 import com.bank.messageapp.util.MyItemDividerDecorator;
 import com.bank.messageapp.util.RecyclerTouchListener;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RecycleActivity extends AppCompatActivity {
 
@@ -24,15 +36,38 @@ public class RecycleActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
 
     private LocalPushMessageDataSource localPushMessageDataSource;
+    private LocalClientDataSource localClientDataSource;
+    private LocalClientServiceDataSource localClientServiceDataSource;
+
+    private Client client = null;
+
+    private List<PushMessage> pushMessageList;
+
+    private MessServerApi messServerApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recycle);
 
-        //
+        AppDatabase db = AppDatabase.getInstance(this);
+        localClientDataSource = new LocalClientDataSource(db.clientDao());
+        localClientServiceDataSource = new LocalClientServiceDataSource(db.clientServiceDataDao());
+        localPushMessageDataSource = new LocalPushMessageDataSource(db.pushMessageDao());
+
+        //создаем коннект к серверу
+        messServerApi = RetrofitBuilder.getInstance().create(MessServerApi.class);
+
+        //Инициализация клиента
+        List<ClientServiceData> clientServiceDataList = localClientServiceDataSource.getAllClientsServiceData();
+        for (ClientServiceData clientServiceData : clientServiceDataList) {
+            if (clientServiceData.getAuthorized())
+                client = localClientDataSource.getClientObject(clientServiceData.getFk_client());
+        }
+
+        //Инициализация списка сообщений
         localPushMessageDataSource = new LocalPushMessageDataSource(AppDatabase.getInstance(this).pushMessageDao());
-        List<PushMessage> pushMessageList = localPushMessageDataSource.getAllPushMessages();
+        pushMessageList = localPushMessageDataSource.getAllPushMessages();
         //
 
         mRecyclerView = (RecyclerView) findViewById(R.id.pushmessage_recycler_view);
@@ -53,5 +88,45 @@ public class RecycleActivity extends AppCompatActivity {
             @Override
             public void onLongClick(View view, int position) { }
         }));
+
+        getNewPushes(getCurrentFocus());
     }
+
+    public void getNewPushes(View v) {
+
+        //создаем запрос
+        PushRequest pushRequest = new PushRequest();
+        pushRequest.phone = client.getPhone_number();
+
+        //выполняем запрос
+        Call<List<PushResponse>> getPushes = messServerApi.getPush(pushRequest);
+        getPushes.enqueue(new Callback<List<PushResponse>>() {
+            @Override
+            public void onResponse(Call<List<PushResponse>> call, Response<List<PushResponse>> response) {
+                if (response.isSuccessful()) {
+                    //
+                    if (response.body() != null) {
+                        for (PushResponse pushResponse : response.body()) {
+                            PushMessage pushMessage = new PushMessage(pushResponse.push, pushResponse.date_delivered, false, client.getId_client());
+                            localPushMessageDataSource.insertPushMessages(pushMessage);
+                            pushMessageList.add(pushMessage);
+                            mAdapter.notifyItemChanged(mAdapter.getItemCount());
+                        }
+                    }
+                } else {
+                    System.out.println("Сервер не отвечает");
+                    System.out.println("RESPONSE CODE " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PushResponse>> call, Throwable t) {
+                System.out.println("Сервер не отвечает");
+                System.out.println("FAILURE " + t);
+            }
+        });
+
+
+    }
+
 }
