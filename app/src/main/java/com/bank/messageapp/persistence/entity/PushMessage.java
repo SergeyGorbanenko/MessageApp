@@ -32,23 +32,28 @@ public class PushMessage {
     @ColumnInfo(name = "isread_status")
     private Boolean isread_status;
 
+    @ColumnInfo(name = "isarchived_status")
+    private Boolean isarchived_status;
+
     @ColumnInfo(name = "fk_client")
     private String fk_client;
 
     @Ignore
-    public PushMessage(String text_message, String date_acceptance, Boolean isread_status, String fk_client) {
+    public PushMessage(String text_message, String date_acceptance, Boolean isread_status, Boolean isarchived_status, String fk_client) {
         this.id_pushmessage = UUID.randomUUID().toString();
         this.text_message = text_message;
         this.date_acceptance = date_acceptance;
         this.isread_status = isread_status;
+        this.isarchived_status = isarchived_status;
         this.fk_client = fk_client;
     }
 
-    public PushMessage(@NonNull String id_pushmessage, String text_message, String date_acceptance, Boolean isread_status, String fk_client) {
+    public PushMessage(@NonNull String id_pushmessage, String text_message, String date_acceptance, Boolean isread_status, Boolean isarchived_status, String fk_client) {
         this.id_pushmessage = id_pushmessage;
         this.text_message = text_message;
         this.date_acceptance = date_acceptance;
         this.isread_status = isread_status;
+        this.isarchived_status = isarchived_status;
         this.fk_client = fk_client;
     }
 
@@ -83,6 +88,14 @@ public class PushMessage {
 
     public void setIsread_status(Boolean isread_status) {
         this.isread_status = isread_status;
+    }
+
+    public Boolean getIsarchived_status() {
+        return isarchived_status;
+    }
+
+    public void setIsarchived_status(Boolean isarchived_status) {
+        this.isarchived_status = isarchived_status;
     }
 
     public String getFk_client() {

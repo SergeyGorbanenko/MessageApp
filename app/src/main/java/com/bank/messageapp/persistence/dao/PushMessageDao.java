@@ -44,4 +44,8 @@ public interface PushMessageDao {
     @Delete
     void deletePushMessage(PushMessage pushMessage);
 
+    //8
+    @Query("SELECT * FROM PushMessage WHERE isarchived_status = :arch AND fk_client = :id_client")
+    List<PushMessage> getIsArchivedPushMessagesByClient(Boolean arch, String id_client);
+
 }

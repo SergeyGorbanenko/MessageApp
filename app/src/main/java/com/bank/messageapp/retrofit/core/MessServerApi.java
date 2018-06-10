@@ -11,6 +11,7 @@ import com.bank.messageapp.retrofit.RegistrationResponse;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -28,5 +29,8 @@ public interface MessServerApi {
 
     @POST("/push")
     Call<List<PushResponse>> getPush(@Body PushRequest pushRequest);
+
+    @POST("/push")
+    Observable<List<PushResponse>> getPushObservable(@Body PushRequest pushRequest);
 
 }

@@ -22,4 +22,6 @@ public interface PushMessageDataSource {
 
     void deletePushMessage(PushMessage pushMessage);
 
+    List<PushMessage> getIsArchivedPushMessagesByClient(Boolean arch, String id_client);
+
 }

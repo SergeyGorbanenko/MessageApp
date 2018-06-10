@@ -1,12 +1,16 @@
 package com.bank.messageapp.activities;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bank.messageapp.PushMessageListAdapter;
@@ -19,35 +23,36 @@ import com.bank.messageapp.persistence.entity.Client;
 import com.bank.messageapp.persistence.entity.ClientServiceData;
 import com.bank.messageapp.persistence.entity.PushMessage;
 import com.bank.messageapp.retrofit.PushRequest;
-import com.bank.messageapp.retrofit.PushResponse;
 import com.bank.messageapp.retrofit.core.MessServerApi;
 import com.bank.messageapp.retrofit.core.RetrofitBuilder;
-import com.bank.messageapp.util.MyItemDividerDecorator;
 import com.bank.messageapp.util.RecyclerTouchListener;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+
+import static com.bank.messageapp.activities.NavActivity.NOTIFICATION_CHANNEL_ID;
 
 public class RecycleActivity extends AppCompatActivity {
-
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     private LocalPushMessageDataSource localPushMessageDataSource;
     private LocalClientDataSource localClientDataSource;
     private LocalClientServiceDataSource localClientServiceDataSource;
 
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
     private Client client = null;
 
     private List<PushMessage> pushMessageList;
 
+    private PushRequest pushRequest;
     private MessServerApi messServerApi;
+    private CompositeDisposable mDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,23 +64,26 @@ public class RecycleActivity extends AppCompatActivity {
         localClientServiceDataSource = new LocalClientServiceDataSource(db.clientServiceDataDao());
         localPushMessageDataSource = new LocalPushMessageDataSource(db.pushMessageDao());
 
-        //создаем коннект к серверу
-        messServerApi = RetrofitBuilder.getInstance().create(MessServerApi.class);
-
         //Инициализация клиента
         List<ClientServiceData> clientServiceDataList = localClientServiceDataSource.getAllClientsServiceData();
         for (ClientServiceData clientServiceData : clientServiceDataList) {
-            if (clientServiceData.getAuthorized())
+            if (clientServiceData.getAuthorized()) {
                 client = localClientDataSource.getClientObject(clientServiceData.getFk_client());
+                break;
+            }
         }
 
-        //Инициализация списка сообщений
-        localPushMessageDataSource = new LocalPushMessageDataSource(AppDatabase.getInstance(this).pushMessageDao());
-        pushMessageList = localPushMessageDataSource.getAllPushMessages();
-        //
+        //создаем запрос
+        pushRequest = new PushRequest();
+        pushRequest.phone = client.getPhone_number();
 
-        mSwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-        mRecyclerView = findViewById(R.id.pushmessage_recycler_view);
+        //создаем коннект к серверу
+        messServerApi = RetrofitBuilder.getInstance().create(MessServerApi.class);
+
+        //Инициализация списка сообщений
+        pushMessageList = localPushMessageDataSource.getIsArchivedPushMessagesByClient(true, client.getId_client());
+
+        mRecyclerView = findViewById(R.id.pushmessage_recycler_view_archive);
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -84,7 +92,6 @@ public class RecycleActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addItemDecoration(new MyItemDividerDecorator(this, LinearLayoutManager.VERTICAL, 16));
 
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, mRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
@@ -94,83 +101,59 @@ public class RecycleActivity extends AppCompatActivity {
 
             @Override
             public void onLongClick(View view, int position) {
-                Toast.makeText(getApplicationContext(), "Удалено одно сообщение", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Сообщение удалено!", Toast.LENGTH_SHORT).show();
                 localPushMessageDataSource.deletePushMessage(pushMessageList.get(position));
                 pushMessageList.remove(position);
                 mAdapter.notifyItemRemoved(position);
             }
         }));
 
-        //Подгрузили список с сервера
-        getNewPushes(getCurrentFocus());
+        //Скрыли метку, если список не пуст
+        TextView textViewEmptyArchiveList = findViewById(R.id.textViewEmptyArchiveList);
+        if (!pushMessageList.isEmpty())
+            textViewEmptyArchiveList.setVisibility(View.INVISIBLE);
+        else
+            textViewEmptyArchiveList.setVisibility(View.VISIBLE);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // Refresh items
-                refreshItems();
-            }
-        });
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mDisposable.clear();
+        //Периодический запрос к серверу для получения списка сообщений
+        mDisposable.add(
+                messServerApi.getPushObservable(pushRequest)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .repeatWhen(completed -> completed.delay(10, TimeUnit.SECONDS))
+                        .subscribe(pushResponses -> {
+                                    if (pushResponses.size() > 0) {
+                                        Intent intent = new Intent(getApplicationContext(), NavActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-    void refreshItems() {
-        // Load items
-        // ...
-        getNewPushes(getCurrentFocus());
+                                        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+                                                .setSmallIcon(R.mipmap.ic_launcher)
+                                                .setContentTitle("Алтайкапиталбанк")
+                                                .setContentText("Новые сообщения: " + pushResponses.size())
+                                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                                .setContentIntent(pendingIntent)
+                                                .setAutoCancel(true);
 
-        // Load complete
-        onItemsLoadComplete();
+                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+                                        // notificationId is a unique int for each notification that you must define
+                                        notificationManager.notify(1, mBuilder.build());
+                                    }
+                                },
+                                Throwable::printStackTrace));
     }
 
-    void onItemsLoadComplete() {
-        // Update the adapter and notify data set changed
-        // ...
-
-        // Stop refresh animation
-        mSwipeRefreshLayout.setRefreshing(false);
-    }
-
-
-
-    public void getNewPushes(View v) {
-
-        //создаем запрос
-        PushRequest pushRequest = new PushRequest();
-        pushRequest.phone = client.getPhone_number();
-
-        //выполняем запрос
-        Call<List<PushResponse>> getPushes = messServerApi.getPush(pushRequest);
-        getPushes.enqueue(new Callback<List<PushResponse>>() {
-            @Override
-            public void onResponse(Call<List<PushResponse>> call, Response<List<PushResponse>> response) {
-                if (response.isSuccessful()) {
-                    //
-                    if (!response.body().isEmpty()) {
-                        for (PushResponse pushResponse : response.body()) {
-                            PushMessage pushMessage = new PushMessage(pushResponse.push, pushResponse.date_delivered, false, client.getId_client());
-                            localPushMessageDataSource.insertPushMessages(pushMessage);
-                            pushMessageList.add(pushMessage);
-                            mAdapter.notifyItemInserted(mAdapter.getItemCount());
-                        }
-                    }
-                } else {
-                    System.out.println("Сервер не отвечает");
-                    System.out.println("RESPONSE CODE " + response.code());
-                    Toast.makeText(getApplicationContext(), "Сервер не отвечает", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<PushResponse>> call, Throwable t) {
-                System.out.println("Сервер не отвечает");
-                System.out.println("FAILURE " + t);
-                Toast.makeText(getApplicationContext(), "Сервер не отвечает", Toast.LENGTH_LONG).show();
-            }
-        });
-
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mDisposable.clear();
     }
 
 }

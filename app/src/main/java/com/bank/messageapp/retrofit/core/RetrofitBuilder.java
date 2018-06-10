@@ -1,6 +1,7 @@
 package com.bank.messageapp.retrofit.core;
 
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitBuilder {
@@ -14,6 +15,7 @@ public class RetrofitBuilder {
                     INSTANCE = new Retrofit.Builder()
                             .baseUrl("http://90.188.7.43:8080/")
                             .addConverterFactory(GsonConverterFactory.create())
+                            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                             .build();
                 }
             }

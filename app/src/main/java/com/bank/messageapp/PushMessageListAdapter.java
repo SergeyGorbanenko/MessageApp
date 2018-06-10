@@ -47,8 +47,13 @@ public class PushMessageListAdapter extends RecyclerView.Adapter<PushMessageList
         PushMessage pushMessage = mPushMessageList.get(position);
 
         holder.dot.setText(Html.fromHtml("&#8226;"));
+        //holder.dot.setText("");
         holder.pushmessage_text.setText(pushMessage.getText_message());
         holder.pushmessage_dateacceptance.setText(pushMessage.getDate_acceptance());
+        if (pushMessage.getIsarchived_status())
+            holder.pushmessage_text.setBackgroundResource(R.drawable.rounded_corner_archive);
+        else
+            holder.pushmessage_text.setBackgroundResource(R.drawable.rounded_corner);
     }
 
     @Override

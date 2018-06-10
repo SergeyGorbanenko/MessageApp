@@ -52,4 +52,8 @@ public class LocalPushMessageDataSource implements PushMessageDataSource {
         mPushMessageDao.deletePushMessage(pushMessage);
     }
 
+    @Override
+    public List<PushMessage> getIsArchivedPushMessagesByClient(Boolean arch, String id_client) {
+        return mPushMessageDao.getIsArchivedPushMessagesByClient(arch, id_client);
+    }
 }

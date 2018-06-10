@@ -17,7 +17,9 @@
     <string name="hintLogin1">номер телефона</string>
     <string name="hintLogin2">код подтверждения</string>
 
-
     <string name="inDevelop">\ \ \ \ \ \ \ \ \ \Экран находится в разработке\nВоспользуйтесь панелью навигации слева</string>
+
+    <string name="emptyPushList">Сообщения пока не приходили</string>
+    <string name="emptyArchiveList">Архив сообщений пуст</string>
 
 </resources>
