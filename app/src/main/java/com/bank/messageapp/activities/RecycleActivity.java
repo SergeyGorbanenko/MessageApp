@@ -1,10 +1,6 @@
 package com.bank.messageapp.activities;
 
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,13 +24,6 @@ import com.bank.messageapp.retrofit.core.RetrofitBuilder;
 import com.bank.messageapp.util.RecyclerTouchListener;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-
-import static com.bank.messageapp.activities.NavActivity.NOTIFICATION_CHANNEL_ID;
 
 public class RecycleActivity extends AppCompatActivity {
 
@@ -52,7 +41,7 @@ public class RecycleActivity extends AppCompatActivity {
 
     private PushRequest pushRequest;
     private MessServerApi messServerApi;
-    private CompositeDisposable mDisposable = new CompositeDisposable();
+    //private CompositeDisposable mDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,44 +105,6 @@ public class RecycleActivity extends AppCompatActivity {
             textViewEmptyArchiveList.setVisibility(View.VISIBLE);
 
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mDisposable.clear();
-        //Периодический запрос к серверу для получения списка сообщений
-        mDisposable.add(
-                messServerApi.getPushObservable(pushRequest)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .repeatWhen(completed -> completed.delay(10, TimeUnit.SECONDS))
-                        .subscribe(pushResponses -> {
-                                    if (pushResponses.size() > 0) {
-                                        Intent intent = new Intent(getApplicationContext(), NavActivity.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-                                        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-                                                .setSmallIcon(R.mipmap.ic_launcher)
-                                                .setContentTitle("Алтайкапиталбанк")
-                                                .setContentText("Новые сообщения: " + pushResponses.size())
-                                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                                .setContentIntent(pendingIntent)
-                                                .setAutoCancel(true);
-
-                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-                                        // notificationId is a unique int for each notification that you must define
-                                        notificationManager.notify(1, mBuilder.build());
-                                    }
-                                },
-                                Throwable::printStackTrace));
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mDisposable.clear();
     }
 
 }

@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.GravityCompat;
@@ -20,9 +22,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bank.messageapp.MyCustomApplication;
 import com.bank.messageapp.PushMessageListAdapter;
 import com.bank.messageapp.R;
 import com.bank.messageapp.persistence.AppDatabase;
@@ -44,7 +48,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -66,6 +69,7 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
 
     /////////////
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RelativeLayout mRelativeContainerForSetting;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -78,7 +82,7 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
 
     public static final String NOTIFICATION_CHANNEL_ID = "4565";
 
-    private CompositeDisposable mDisposable = new CompositeDisposable();
+    //private CompositeDisposable mDisposable = new CompositeDisposable();
 
     private TextView textViewEmptyPushList;
 
@@ -145,6 +149,7 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
         pushRequest = new PushRequest();
         pushRequest.phone = client.getPhone_number();
 
+        mRelativeContainerForSetting = findViewById(R.id.relativeContainer);
         mSwipeRefreshLayout = findViewById(R.id.swipeRefreshLayoutInNav);
         mRecyclerView = findViewById(R.id.pushmessage_recycler_view_in_nav);
 
@@ -204,9 +209,9 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
     @Override
     protected void onStart() {
         super.onStart();
-        mDisposable.clear();
+        ((MyCustomApplication) this.getApplication()).getmDisposable().clear();
         //Периодический запрос к серверу для получения списка сообщений
-        mDisposable.add(
+        ((MyCustomApplication) this.getApplication()).getmDisposable().add(
                 messServerApi.getPushObservable(pushRequest)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -237,19 +242,15 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
                                         notificationManager.notify(1, mBuilder.build());
                                     }
                                     //Скрыли метку, если список не пуст
-                                    if (!pushMessageList.isEmpty())
-                                        textViewEmptyPushList.setVisibility(View.INVISIBLE);
-                                    else
-                                        textViewEmptyPushList.setVisibility(View.VISIBLE);
+                                    if (!this.getTitle().equals("Настройки"))
+                                        if (!pushMessageList.isEmpty())
+                                            textViewEmptyPushList.setVisibility(View.INVISIBLE);
+                                        else
+                                            textViewEmptyPushList.setVisibility(View.VISIBLE);
                                 },
                                 Throwable::printStackTrace));
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mDisposable.clear();
-    }
 
     void refreshItems() {
         // Load items
@@ -353,11 +354,25 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
+        // Создадим новый фрагмент
+        Fragment fragment = null;
+        Class fragmentClass = null;
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_bill_list) {
+            setTitle(R.string.title_activity_nav);
             refreshItems();
+            item.setChecked(true);
+            //
+            mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+            mRelativeContainerForSetting.setVisibility(View.INVISIBLE);
+            //Скрыли метку, если список не пуст
+            if (!pushMessageList.isEmpty())
+                textViewEmptyPushList.setVisibility(View.INVISIBLE);
+            else
+                textViewEmptyPushList.setVisibility(View.VISIBLE);
 
         } else if (id == R.id.nav_archive){
             //Переход в архив
@@ -365,7 +380,24 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
             startActivity(intent);
 
         } else if (id == R.id.nav_setting) {
-            //this.setTitle("Настройки");
+            setTitle(item.getTitle());
+            fragmentClass = SettingsFragment.class;
+
+            try {
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // Вставляем фрагмент, заменяя текущий фрагмент
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.relativeContainer, fragment).commit();
+            // Выделяем выбранный пункт меню в шторке
+            item.setChecked(true);
+            //
+            mSwipeRefreshLayout.setVisibility(View.INVISIBLE);
+            mRelativeContainerForSetting.setVisibility(View.VISIBLE);
+            textViewEmptyPushList.setVisibility(View.INVISIBLE);
 
         /*} else if (id == R.id.nav_testing) {
             Intent intent = new Intent(this, TestingActivity.class);
@@ -388,7 +420,7 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
                             clientServiceData.setAuthorized(false);
                             localClientServiceDataSource.updateClientServiceData(clientServiceData);
                             //
-                            mDisposable.clear();
+                            ((MyCustomApplication) getApplication()).getmDisposable().clear();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }
                     } else {

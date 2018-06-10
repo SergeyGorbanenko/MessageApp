@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/textViewTitleAutoUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="35dp"
+        android:text="@string/titleAutoupdate"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp" />
+
+    <Switch
+        android:id="@+id/switchAutoUpdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="156dp"
+        android:checked="true"
+        android:paddingEnd="30dp"
+        android:paddingStart="25dp"
+        android:text="Автообновление сообщений"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textViewTextAutoUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="79dp"
+        android:paddingEnd="30dp"
+        android:paddingStart="25dp"
+        android:text="@string/textAutoupdate" />
+</RelativeLayout>
