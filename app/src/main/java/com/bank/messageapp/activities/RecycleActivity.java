@@ -41,7 +41,6 @@ public class RecycleActivity extends AppCompatActivity {
 
     private PushRequest pushRequest;
     private MessServerApi messServerApi;
-    //private CompositeDisposable mDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

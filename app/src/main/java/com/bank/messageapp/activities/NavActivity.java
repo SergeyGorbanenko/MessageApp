@@ -82,8 +82,6 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
 
     public static final String NOTIFICATION_CHANNEL_ID = "4565";
 
-    //private CompositeDisposable mDisposable = new CompositeDisposable();
-
     private TextView textViewEmptyPushList;
 
     @Override
@@ -195,22 +193,43 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
             }
         });
 
-
         //Скрыли метку, если список не пуст
         if (!pushMessageList.isEmpty())
             textViewEmptyPushList.setVisibility(View.INVISIBLE);
         else
             textViewEmptyPushList.setVisibility(View.VISIBLE);
 
-
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        //
+        if (clientServiceData.getAutoupdate_push())     //Если в настройках включено автообновление
+            getPushesPeriodic();
+    }
+
+
+    void refreshItems() {
+        // Load items
+        getPushes();
+
+        // Load complete
+        onItemsLoadComplete();
+    }
+
+    void onItemsLoadComplete() {
+        // Update the adapter and notify data set changed
+        // ...
+
+        // Stop refresh animation
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+
+    //Периодический запрос к серверу для получения списка сообщений
+    public void getPushesPeriodic() {
         ((MyCustomApplication) this.getApplication()).getmDisposable().clear();
-        //Периодический запрос к серверу для получения списка сообщений
         ((MyCustomApplication) this.getApplication()).getmDisposable().add(
                 messServerApi.getPushObservable(pushRequest)
                         .subscribeOn(Schedulers.io())
@@ -250,24 +269,6 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
                                 },
                                 Throwable::printStackTrace));
     }
-
-
-    void refreshItems() {
-        // Load items
-        getPushes();
-
-        // Load complete
-        onItemsLoadComplete();
-    }
-
-    void onItemsLoadComplete() {
-        // Update the adapter and notify data set changed
-        // ...
-
-        // Stop refresh animation
-        mSwipeRefreshLayout.setRefreshing(false);
-    }
-
 
     //Запрос к серверу для получения списка сообщений
     private void getPushes() {
@@ -338,7 +339,6 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
     }
 
 
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -364,6 +364,9 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
         if (id == R.id.nav_bill_list) {
             setTitle(R.string.title_activity_nav);
             refreshItems();
+            clientServiceData = localClientServiceDataSource.getAuthorizedClientServiceData(true);
+            if (clientServiceData.getAutoupdate_push())     //Если в настройках включено автообновление
+                getPushesPeriodic();
             item.setChecked(true);
             //
             mSwipeRefreshLayout.setVisibility(View.VISIBLE);

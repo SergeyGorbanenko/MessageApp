@@ -37,4 +37,8 @@ public interface ClientServiceDataDao {
     //6
     @Delete
     void deleteClientServiceData(ClientServiceData clientServiceData);
+
+    //7
+    @Query("SElECT * FROM clientservicedata WHERE is_authorized = :authorized LIMIT 1")
+    ClientServiceData getAuthorizedClientServiceData(Boolean authorized);
 }

@@ -43,4 +43,9 @@ public class LocalClientServiceDataSource implements ClientServiceDataSource {
     public void deleteClientServiceData(ClientServiceData clientServiceData) {
         mClientServiceDataDao.deleteClientServiceData(clientServiceData);
     }
+
+    @Override
+    public ClientServiceData getAuthorizedClientServiceData(Boolean authorized) {
+        return mClientServiceDataDao.getAuthorizedClientServiceData(authorized);
+    }
 }

@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                         if (client == null) {           //если клиента нет в базе
                             client = new Client(phone);                     //инит клиента
                             localClientDataSource.insertClient(client);     //записать в таблицу клиентов
-                            localClientServiceDataSource.insertClientServiceData(new ClientServiceData(true, uuid, client.getId_client()));     //записать в сервис-таблицу флаг авторизации и uuid
+                            localClientServiceDataSource.insertClientServiceData(new ClientServiceData(true, uuid, true, client.getId_client()));     //записать в сервис-таблицу флаг авторизации и uuid
                         } else {
                             //если такой клиент уже есть в базе, то только обновить флаг авторизации
                             //костылек (из за связи 1-1)

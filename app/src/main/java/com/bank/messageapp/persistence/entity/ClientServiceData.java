@@ -29,21 +29,26 @@ public class ClientServiceData {
     @ColumnInfo (name = "uuid")
     private String uuid;
 
+    @ColumnInfo (name = "autoupdate_push")
+    private Boolean autoupdate_push;
+
     @ColumnInfo(name = "fk_client")
     private String fk_client;
 
     @Ignore
-    public ClientServiceData(Boolean isAuthorized, String uuid, String fk_client) {
+    public ClientServiceData(Boolean isAuthorized, String uuid, Boolean autoupdate_push, String fk_client) {
         this.id_csd = UUID.randomUUID().toString();
         this.isAuthorized = isAuthorized;
         this.uuid = uuid;
+        this.autoupdate_push = autoupdate_push;
         this.fk_client = fk_client;
     }
 
-    public ClientServiceData(@NonNull String id_csd, String uuid, Boolean isAuthorized, String fk_client) {
+    public ClientServiceData(@NonNull String id_csd, String uuid, Boolean isAuthorized, Boolean autoupdate_push, String fk_client) {
         this.id_csd = id_csd;
         this.isAuthorized = isAuthorized;
         this.uuid = uuid;
+        this.autoupdate_push = autoupdate_push;
         this.fk_client = fk_client;
     }
 
@@ -70,6 +75,14 @@ public class ClientServiceData {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public Boolean getAutoupdate_push() {
+        return autoupdate_push;
+    }
+
+    public void setAutoupdate_push(Boolean autoupdate_push) {
+        this.autoupdate_push = autoupdate_push;
     }
 
     public String getFk_client() {

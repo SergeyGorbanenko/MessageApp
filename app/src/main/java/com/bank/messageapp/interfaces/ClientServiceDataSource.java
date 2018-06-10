@@ -17,4 +17,6 @@ public interface ClientServiceDataSource {
     void deleteAllClientsServiceData();
 
     void deleteClientServiceData(ClientServiceData clientServiceData);
+
+    ClientServiceData getAuthorizedClientServiceData(Boolean authorized);
 }

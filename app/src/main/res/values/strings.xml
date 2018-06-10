@@ -22,7 +22,7 @@
     <string name="emptyPushList">Сообщения пока не приходили</string>
     <string name="emptyArchiveList">Архив сообщений пуст</string>
 
-    <string name="titleAutoupdate">Параметры автообновления</string>
-    <string name="textAutoupdate">Включение функции автообновления сообщений позволяет получать уведомления, даже когда приложение свернуто</string>
+    <string name="titleAutoupdate">Параметры уведомлений</string>
+    <string name="textAutoupdate">Если функция автоматического получения сообщений включена, то уведомления будут приходить, даже когда приложение свернуто</string>
 
 </resources>

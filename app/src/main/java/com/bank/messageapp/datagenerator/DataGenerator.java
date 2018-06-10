@@ -52,8 +52,8 @@ public class DataGenerator {
         pushMessageDao.insertPushMessages(pushMessage3);
     }
 
-    public void isAuthorizedClientGeneration(Boolean value, String uuid, String fk_client) {
-        mClientServiceData = new ClientServiceData(value, uuid, fk_client);
+    public void isAuthorizedClientGeneration(Boolean value, String uuid, Boolean auto_update, String fk_client) {
+        mClientServiceData = new ClientServiceData(value, uuid, auto_update, fk_client);
         clientServiceDataDao.insertClientServiceData(mClientServiceData);
     }
 
