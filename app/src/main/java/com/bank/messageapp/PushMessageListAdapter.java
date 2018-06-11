@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bank.messageapp.persistence.Converters;
 import com.bank.messageapp.persistence.entity.PushMessage;
 
 import java.util.List;
@@ -49,7 +50,7 @@ public class PushMessageListAdapter extends RecyclerView.Adapter<PushMessageList
         holder.dot.setText(Html.fromHtml("&#8226;"));
         //holder.dot.setText("");
         holder.pushmessage_text.setText(pushMessage.getText_message());
-        holder.pushmessage_dateacceptance.setText(pushMessage.getDate_acceptance());
+        holder.pushmessage_dateacceptance.setText(pushMessage.getDate_acceptance().format(Converters.formatter));
         if (pushMessage.getIsarchived_status())
             holder.pushmessage_text.setBackgroundResource(R.drawable.rounded_corner_archive);
         else

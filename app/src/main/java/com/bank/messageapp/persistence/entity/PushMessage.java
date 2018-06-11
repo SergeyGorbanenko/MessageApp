@@ -8,6 +8,7 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity (tableName = "pushmessage",
@@ -27,7 +28,7 @@ public class PushMessage {
     private String text_message;
 
     @ColumnInfo (name = "date_acceptance")
-    private String date_acceptance;
+    private LocalDateTime date_acceptance;
 
     @ColumnInfo(name = "isread_status")
     private Boolean isread_status;
@@ -39,7 +40,7 @@ public class PushMessage {
     private String fk_client;
 
     @Ignore
-    public PushMessage(String text_message, String date_acceptance, Boolean isread_status, Boolean isarchived_status, String fk_client) {
+    public PushMessage(String text_message, LocalDateTime date_acceptance, Boolean isread_status, Boolean isarchived_status, String fk_client) {
         this.id_pushmessage = UUID.randomUUID().toString();
         this.text_message = text_message;
         this.date_acceptance = date_acceptance;
@@ -48,7 +49,7 @@ public class PushMessage {
         this.fk_client = fk_client;
     }
 
-    public PushMessage(@NonNull String id_pushmessage, String text_message, String date_acceptance, Boolean isread_status, Boolean isarchived_status, String fk_client) {
+    public PushMessage(@NonNull String id_pushmessage, String text_message, LocalDateTime date_acceptance, Boolean isread_status, Boolean isarchived_status, String fk_client) {
         this.id_pushmessage = id_pushmessage;
         this.text_message = text_message;
         this.date_acceptance = date_acceptance;
@@ -74,11 +75,11 @@ public class PushMessage {
         this.text_message = text_message;
     }
 
-    public String getDate_acceptance() {
+    public LocalDateTime getDate_acceptance() {
         return date_acceptance;
     }
 
-    public void setDate_acceptance(String date_acceptance) {
+    public void setDate_acceptance(LocalDateTime date_acceptance) {
         this.date_acceptance = date_acceptance;
     }
 

@@ -23,6 +23,8 @@ import com.bank.messageapp.retrofit.core.MessServerApi;
 import com.bank.messageapp.retrofit.core.RetrofitBuilder;
 import com.bank.messageapp.util.RecyclerTouchListener;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class RecycleActivity extends AppCompatActivity {
@@ -102,7 +104,55 @@ public class RecycleActivity extends AppCompatActivity {
             textViewEmptyArchiveList.setVisibility(View.INVISIBLE);
         else
             textViewEmptyArchiveList.setVisibility(View.VISIBLE);
+    }
 
+
+    public void showArchivePushByLastMonth(View v) {
+        setTitle("Архив сообщений: за месяц");
+        pushMessageList.clear();
+        List<PushMessage> pushMessageListAll = localPushMessageDataSource.getIsArchivedPushMessagesByClient(true, client.getId_client());
+        LocalDateTime nowLocalDateTime = LocalDateTime.now();
+        for (PushMessage pm: pushMessageListAll) {
+            if(pm.getDate_acceptance().getMonth().compareTo(nowLocalDateTime.getMonth()) == 0)
+                pushMessageList.add(mAdapter.getItemCount(), pm);
+        }
+        mAdapter.notifyDataSetChanged();
+
+    }
+
+    public void showArchivePushByLastWeek(View v) {
+        setTitle("Архив сообщений: за неделю");
+        pushMessageList.clear();
+        List<PushMessage> pushMessageListAll = localPushMessageDataSource.getIsArchivedPushMessagesByClient(true, client.getId_client());
+        LocalDate nowLocalDate = LocalDate.now();
+        for (PushMessage pm: pushMessageListAll) {
+            //System.out.println(nowLocalDate.getDayOfYear() - pm.getDate_acceptance().toLocalDate().getDayOfYear());
+            if(nowLocalDate.getDayOfYear() - pm.getDate_acceptance().toLocalDate().getDayOfYear() <= 7)
+                pushMessageList.add(mAdapter.getItemCount(), pm);
+        }
+        mAdapter.notifyDataSetChanged();
+
+    }
+
+    public void showArchivePushByToday(View v) {
+        setTitle("Архив сообщений: сегодня");
+        pushMessageList.clear();
+        List<PushMessage> pushMessageListAll = localPushMessageDataSource.getIsArchivedPushMessagesByClient(true, client.getId_client());
+        LocalDate nowLocalDate = LocalDate.now();
+        for (PushMessage pm: pushMessageListAll) {
+            //System.out.println(pm.getDate_acceptance().toLocalDate().getDayOfYear() + " " + nowLocalDate.getDayOfYear());
+            if(pm.getDate_acceptance().toLocalDate().getDayOfYear() == nowLocalDate.getDayOfYear())
+                pushMessageList.add(mAdapter.getItemCount(), pm);
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    public void showArchivePushByAll(View v) {
+        setTitle("Архив сообщений");
+        pushMessageList.clear();
+        List<PushMessage> pushMessageListAll = localPushMessageDataSource.getIsArchivedPushMessagesByClient(true, client.getId_client());
+        pushMessageList.addAll(pushMessageListAll);
+        mAdapter.notifyDataSetChanged();
 
     }
 

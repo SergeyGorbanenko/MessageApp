@@ -10,6 +10,8 @@ import com.bank.messageapp.persistence.entity.Client;
 import com.bank.messageapp.persistence.entity.ClientServiceData;
 import com.bank.messageapp.persistence.entity.PushMessage;
 
+import java.time.LocalDateTime;
+
 public class DataGenerator {
 
     private Context context;
@@ -44,9 +46,9 @@ public class DataGenerator {
 
     public void PushMessagesGeneration(String phone) {
         pushMessageDao.deleteAllPushMessages();
-        PushMessage pushMessage1 = new PushMessage("VISA1234 Cписание 536 р.\nБаланс: 500 р.", "23.05.2018", false, false, clientDao.getClientByPhoneNumber(phone).getId_client());
-        PushMessage pushMessage2 = new PushMessage("VISA0200 Зачисление 1000 р.\nБаланс: 1000 р.", "24.05.2018", false, false, clientDao.getClientByPhoneNumber(phone).getId_client());
-        PushMessage pushMessage3 = new PushMessage("VISA4321 Снятие наличных 100 р.\nБаланс: 0 р.", "25.05.2018", false, false, clientDao.getClientByPhoneNumber(phone).getId_client());
+        PushMessage pushMessage1 = new PushMessage("VISA1234 Cписание 536 р.\nБаланс: 500 р.", LocalDateTime.now(), false, false, clientDao.getClientByPhoneNumber(phone).getId_client());
+        PushMessage pushMessage2 = new PushMessage("VISA0200 Зачисление 1000 р.\nБаланс: 1000 р.", LocalDateTime.now(), false, false, clientDao.getClientByPhoneNumber(phone).getId_client());
+        PushMessage pushMessage3 = new PushMessage("VISA4321 Снятие наличных 100 р.\nБаланс: 0 р.", LocalDateTime.now(), false, false, clientDao.getClientByPhoneNumber(phone).getId_client());
         pushMessageDao.insertPushMessages(pushMessage1);
         pushMessageDao.insertPushMessages(pushMessage2);
         pushMessageDao.insertPushMessages(pushMessage3);

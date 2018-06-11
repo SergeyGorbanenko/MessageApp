@@ -3,6 +3,7 @@ package com.bank.messageapp.persistence;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
 import com.bank.messageapp.persistence.dao.ClientDao;
@@ -13,6 +14,7 @@ import com.bank.messageapp.persistence.entity.ClientServiceData;
 import com.bank.messageapp.persistence.entity.PushMessage;
 
 @Database(entities = {Client.class, PushMessage.class, ClientServiceData.class}, version = 1, exportSchema = false)
+@TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     private static volatile AppDatabase INSTANCE;

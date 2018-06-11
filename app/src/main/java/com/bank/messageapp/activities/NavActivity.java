@@ -30,6 +30,7 @@ import com.bank.messageapp.MyCustomApplication;
 import com.bank.messageapp.PushMessageListAdapter;
 import com.bank.messageapp.R;
 import com.bank.messageapp.persistence.AppDatabase;
+import com.bank.messageapp.persistence.Converters;
 import com.bank.messageapp.persistence.datasource.LocalClientDataSource;
 import com.bank.messageapp.persistence.datasource.LocalClientServiceDataSource;
 import com.bank.messageapp.persistence.datasource.LocalPushMessageDataSource;
@@ -44,6 +45,7 @@ import com.bank.messageapp.retrofit.core.MessServerApi;
 import com.bank.messageapp.retrofit.core.RetrofitBuilder;
 import com.bank.messageapp.util.RecyclerTouchListener;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -183,7 +185,8 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
         }));
 
         //Подгрузили список с сервера
-        getPushes();
+        if(!clientServiceData.getAutoupdate_push())
+            getPushes();
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -212,7 +215,8 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
 
     void refreshItems() {
         // Load items
-        getPushes();
+        //if(!clientServiceData.getAutoupdate_push())
+            getPushes();
 
         // Load complete
         onItemsLoadComplete();
@@ -237,7 +241,7 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
                         .repeatWhen(completed -> completed.delay(10, TimeUnit.SECONDS))
                         .subscribe(pushResponses -> {
                                     for (PushResponse pushResponse : pushResponses) {
-                                        PushMessage pushMessage = new PushMessage(pushResponse.push, pushResponse.date_delivered, false, false, client.getId_client());
+                                        PushMessage pushMessage = new PushMessage(pushResponse.push, LocalDateTime.parse(pushResponse.date_delivered, Converters.formatter), false, false, client.getId_client());
                                         localPushMessageDataSource.insertPushMessages(pushMessage);
                                         pushMessageList.add(pushMessage);
                                         mAdapter.notifyItemInserted(mAdapter.getItemCount());
@@ -297,13 +301,17 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
                             // notificationId is a unique int for each notification that you must define
                             notificationManager.notify(1, mBuilder.build());
                         }
-
                         for (PushResponse pushResponse : response.body()) {
-                            PushMessage pushMessage = new PushMessage(pushResponse.push, pushResponse.date_delivered, false, false, client.getId_client());
+                            PushMessage pushMessage = new PushMessage(pushResponse.push, LocalDateTime.parse(pushResponse.date_delivered, Converters.formatter), false, false, client.getId_client());
                             localPushMessageDataSource.insertPushMessages(pushMessage);
                             pushMessageList.add(pushMessage);
                             mAdapter.notifyItemInserted(mAdapter.getItemCount());
                         }
+                        //Скрыли метку, если список не пуст
+                            if (!pushMessageList.isEmpty())
+                                textViewEmptyPushList.setVisibility(View.INVISIBLE);
+                            else
+                                textViewEmptyPushList.setVisibility(View.VISIBLE);
                     }
                 } else {
                     System.out.println("Сервер не отвечает");
@@ -363,7 +371,7 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
 
         if (id == R.id.nav_bill_list) {
             setTitle(R.string.title_activity_nav);
-            refreshItems();
+            //refreshItems();
             clientServiceData = localClientServiceDataSource.getAuthorizedClientServiceData(true);
             if (clientServiceData.getAutoupdate_push())     //Если в настройках включено автообновление
                 getPushesPeriodic();
