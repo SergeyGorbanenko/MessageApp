@@ -31,7 +31,6 @@ public class SettingsFragment extends Fragment {
         AppDatabase db = AppDatabase.getInstance(getContext());
         localClientServiceDataSource = new LocalClientServiceDataSource(db.clientServiceDataDao());
         clientServiceData = localClientServiceDataSource.getAuthorizedClientServiceData(true);
-        //Инициализация переключателя в настройках
         mSwitch = v.findViewById(R.id.switchAutoUpdate);
         if (clientServiceData.getAutoupdate_push())
             mSwitch.setChecked(true);

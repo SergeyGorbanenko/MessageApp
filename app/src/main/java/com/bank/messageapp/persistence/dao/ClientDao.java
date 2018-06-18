@@ -13,38 +13,63 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 
+/**
+ * интерфейс data access object сущности Клиент
+ */
 @Dao
 public interface ClientDao {
 
-    //1
+    /**
+     * Получить список всех клиентов
+     */
     @Query("SElECT * FROM client")
     List<Client> getAllClients();
 
-    //2
+    /**
+     * Получить клиента
+     * @param id ид клиента
+     */
     @Query("SElECT * FROM client WHERE id_client = :id LIMIT 1")
     Flowable<Client> getClientFlowable(String id);
 
-    //3
+    /**
+     * Получить клиента
+     * @param id ид клиента
+     */
     @Query("SElECT * FROM client WHERE id_client = :id LIMIT 1")
     Client getClientObject(String id);
 
-    //4
+    /**
+     * Вставить клиента
+     * @param client клиент
+     */
     @Insert (onConflict = OnConflictStrategy.REPLACE)
     void insertClient(Client client);
 
-    //5
+    /**
+     * Обновить клиента
+     * @param client клиент
+     */
     @Update
     void updateClient(Client client);
 
-    //6
+    /**
+     * Удалить всех клиентов
+     */
     @Query("DELETE FROM client")
     void deleteAllClients();
 
-    //7
+    /**
+     * Удалить клиента
+     * @param client клиент
+     */
     @Delete
     void deleteClient(Client client);
 
-    //8
+    /**
+     * Получить клиента по номеру телефона
+     * @param phone номер телефона
+     */
     @Query("SELECT * FROM client WHERE phone_number = :phone LIMIT 1")
     Client getClientByPhoneNumber(String phone);
 

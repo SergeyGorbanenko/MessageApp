@@ -108,13 +108,11 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //Инициализация источников данных
         AppDatabase db = AppDatabase.getInstance(this);
         localClientDataSource = new LocalClientDataSource(db.clientDao());
         localClientServiceDataSource = new LocalClientServiceDataSource(db.clientServiceDataDao());
         localPushMessageDataSource = new LocalPushMessageDataSource(db.pushMessageDao());
 
-        //Инициализация авторизованного клиента
         List<ClientServiceData> clientServiceDataList = localClientServiceDataSource.getAllClientsServiceData();
         for (ClientServiceData clientServiceData : clientServiceDataList) {
             if (clientServiceData.getAuthorized()) {
@@ -139,9 +137,7 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
         //создаем коннект к серверу
         messServerApi = RetrofitBuilder.getInstance().create(MessServerApi.class);
 
-        //Инициализация списка сообщений
         pushMessageList = localPushMessageDataSource.getIsArchivedPushMessagesByClient(false, client.getId_client());
-
         //создаем запрос
         pushRequest = new PushRequest();
         pushRequest.phone = client.getPhone_number();

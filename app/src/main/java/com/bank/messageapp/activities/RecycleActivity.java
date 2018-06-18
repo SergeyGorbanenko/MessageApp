@@ -51,7 +51,6 @@ public class RecycleActivity extends AppCompatActivity {
         localClientServiceDataSource = new LocalClientServiceDataSource(db.clientServiceDataDao());
         localPushMessageDataSource = new LocalPushMessageDataSource(db.pushMessageDao());
 
-        //Инициализация клиента
         List<ClientServiceData> clientServiceDataList = localClientServiceDataSource.getAllClientsServiceData();
         for (ClientServiceData clientServiceData : clientServiceDataList) {
             if (clientServiceData.getAuthorized()) {
@@ -67,7 +66,6 @@ public class RecycleActivity extends AppCompatActivity {
         //создаем коннект к серверу
         //messServerApi = RetrofitBuilder.getInstance().create(MessServerApi.class);
 
-        //Инициализация списка сообщений
         pushMessageList = localPushMessageDataSource.getIsArchivedPushMessagesByClient(true, client.getId_client());
 
         mRecyclerView = findViewById(R.id.pushmessage_recycler_view_archive);
