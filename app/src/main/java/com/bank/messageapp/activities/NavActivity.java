@@ -69,7 +69,6 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
     private TextView clientHeaderName;
     private TextView clientHeaderPhoneNumber;
 
-    /////////////
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RelativeLayout mRelativeContainerForSetting;
 
@@ -109,7 +108,6 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         //Инициализация источников данных
         AppDatabase db = AppDatabase.getInstance(this);
         localClientDataSource = new LocalClientDataSource(db.clientDao());
@@ -130,7 +128,6 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
         clientHeaderName = (TextView) headerView.findViewById(R.id.clientHeaderName);
         clientHeaderPhoneNumber = (TextView) headerView.findViewById(R.id.clientHeaderPhoneNumber);
         clientHeaderPhoneNumber.setText(client.getPhone_number());
-
 
         /////////////////////////////////////////////////////////////////////
         //создать канал уведомлений

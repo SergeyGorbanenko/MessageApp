@@ -9,7 +9,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bank.messageapp.R;
-import com.bank.messageapp.datagenerator.DataGenerator;
 import com.bank.messageapp.persistence.AppDatabase;
 import com.bank.messageapp.persistence.datasource.LocalClientDataSource;
 import com.bank.messageapp.persistence.datasource.LocalClientServiceDataSource;
@@ -49,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private String uuid;
     private String phone;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,14 +70,12 @@ public class MainActivity extends AppCompatActivity {
         messServerApi = RetrofitBuilder.getInstance().create(MessServerApi.class);
 
         //Генерация данных в базу
-        DataGenerator dataGenerator = new DataGenerator(this);
-        dataGenerator.initGenerator();
-
+        //DataGenerator dataGenerator = new DataGenerator(this);
+        //dataGenerator.initGenerator();
         //dataGenerator.clearDB();
         //dataGenerator.ClientGeneration();
         //dataGenerator.PushMessagesGeneration("9237977175");
         //dataGenerator.isAuthorizedClientGeneration(false,);
-
 
         //Если есть один (и только один) авторизованный клиент, то сразу входим под ним
         List<ClientServiceData> clientServiceDataList = localClientServiceDataSource.getAllClientsServiceData();
@@ -88,16 +84,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, NavActivity.class)); //не инициализируем экран входа - переход дальше
         }
 
-        /*if(db.clientServiceDataDao().getClientServiceData() !=null)
-            if(db.clientServiceDataDao().getClientServiceData().getAuthorized())
-                startActivity(new Intent(this, NavActivity.class)); //не инициализируем экран входа - переход дальше*/
-
     }
 
     public void performLoginPhoneNumber(View view) {
 
         labelLogin.setText("Вход");
-
 
         textViewInfo.setText(R.string.textLogin1);
         editTextPhoneEnter.setHint(R.string.hintLogin1);
@@ -151,10 +142,8 @@ public class MainActivity extends AppCompatActivity {
                 editTextPhoneEnter.setEnabled(true);
             }
         });
-        //
 
     }
-
 
     public void performLoginAcceptCode(View v) {
 
@@ -174,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<AcceptanceCodeResponse> call, Response<AcceptanceCodeResponse> response) {
                 if (response.isSuccessful()) {
-                    if (response.body().uuid.equals("NotMatch")) {  //Неверный код подтверждения
+                    if (response.body().equals("NotMatch")) {  //Неверный код подтверждения
                         textViewInfo.setText(R.string.textLogin4);
                     } else {  //если код совпал
                         textViewInfo.setText(null);
@@ -188,7 +177,6 @@ public class MainActivity extends AppCompatActivity {
                             localClientServiceDataSource.insertClientServiceData(new ClientServiceData(true, uuid, true, client.getId_client()));     //записать в сервис-таблицу флаг авторизации и uuid
                         } else {
                             //если такой клиент уже есть в базе, то только обновить флаг авторизации
-                            //костылек (из за связи 1-1)
                             List<ClientServiceData> clientServiceDataList = localClientServiceDataSource.getAllClientsServiceData();
                             for (ClientServiceData clientServiceData : clientServiceDataList)
                                 if (clientServiceData.getFk_client().equals(client.getId_client())) {
@@ -251,8 +239,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ex) {
             //handle exception
         }
-        return "her tobi";
+        return "null";
     }
-
 
 }

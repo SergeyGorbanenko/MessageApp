@@ -18,9 +18,6 @@ import com.bank.messageapp.persistence.datasource.LocalPushMessageDataSource;
 import com.bank.messageapp.persistence.entity.Client;
 import com.bank.messageapp.persistence.entity.ClientServiceData;
 import com.bank.messageapp.persistence.entity.PushMessage;
-import com.bank.messageapp.retrofit.PushRequest;
-import com.bank.messageapp.retrofit.core.MessServerApi;
-import com.bank.messageapp.retrofit.core.RetrofitBuilder;
 import com.bank.messageapp.util.RecyclerTouchListener;
 
 import java.time.LocalDate;
@@ -41,8 +38,8 @@ public class RecycleActivity extends AppCompatActivity {
 
     private List<PushMessage> pushMessageList;
 
-    private PushRequest pushRequest;
-    private MessServerApi messServerApi;
+    //private PushRequest pushRequest;
+    //private MessServerApi messServerApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,11 +61,11 @@ public class RecycleActivity extends AppCompatActivity {
         }
 
         //создаем запрос
-        pushRequest = new PushRequest();
-        pushRequest.phone = client.getPhone_number();
+        //pushRequest = new PushRequest();
+        //pushRequest.phone = client.getPhone_number();
 
         //создаем коннект к серверу
-        messServerApi = RetrofitBuilder.getInstance().create(MessServerApi.class);
+        //messServerApi = RetrofitBuilder.getInstance().create(MessServerApi.class);
 
         //Инициализация списка сообщений
         pushMessageList = localPushMessageDataSource.getIsArchivedPushMessagesByClient(true, client.getId_client());
