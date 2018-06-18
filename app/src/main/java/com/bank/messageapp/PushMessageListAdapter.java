@@ -12,9 +12,12 @@ import com.bank.messageapp.persistence.Converters;
 import com.bank.messageapp.persistence.entity.PushMessage;
 
 import java.util.List;
-
+/**
+ * Класс адаптер списка сообщений
+ */
 public class PushMessageListAdapter extends RecyclerView.Adapter<PushMessageListAdapter.ViewHolder> {
 
+    /** Поле список Сообщений */
     private List<PushMessage> mPushMessageList;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

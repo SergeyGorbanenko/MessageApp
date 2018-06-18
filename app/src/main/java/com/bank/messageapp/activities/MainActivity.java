@@ -28,26 +28,42 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+/**
+ * Класс активности авторизации пользователя
+ */
 public class MainActivity extends AppCompatActivity {
 
     public final static String EXTRA_MESS = "";
+    /** Константа длина номера телефона  */
     public final static int LENGHT_PHONE_NUMBER = 10;
 
+    /** Текстовое поле с меткой "Войти" */
     private TextView labelLogin;
-    private TextView textViewInfo;
-    private EditText editTextPhoneEnter;
-    private Button buttonLogin;
+    /** Текстовое поле с меткой +7 */
     private TextView textViewPlus7;
+    /** Текстовое поле с информацией об ошибках */
+    private TextView textViewInfo;
+    /** Текстовое поле для ввода номера телефона или смс-кода подтверждения */
+    private EditText editTextPhoneEnter;
+    /** Кнопка "Войти" */
+    private Button buttonLogin;
 
+    /** Поле экземпляра интерфейса запросов к веб-серверу */
     private MessServerApi messServerApi;
 
+    /** Поле локальное хранилище Клиентов */
     private LocalClientDataSource localClientDataSource;
+    /** Поле локальное хранилище Сервис данных клиента */
     private LocalClientServiceDataSource localClientServiceDataSource;
 
+    /** Поле уникальный идентификатор устройства */
     private String uuid;
+    /** Поле номер телефона */
     private String phone;
 
+    /**
+     * инициализация при создании
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +102,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Выполняет запрос на веб-сервер по регистрации нового клиента в системе
+     * Выполняется при нажатии на кнопку "Войти", когда в поле EditText введен корректный номер телефона
+     * @param view элемент управления - кнопка "Войти"
+     */
     public void performLoginPhoneNumber(View view) {
 
         labelLogin.setText("Вход");
@@ -145,6 +166,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Выполняет запрос на веб-сервер по подтверждению смс-кода
+     * Выполняется при нажатии на кнопку "Войти", когда в поле EditText введен корректный смс-код подтверждения
+     * @param v элемент управления - кнопка "Войти"
+     */
     public void performLoginAcceptCode(View v) {
 
         labelLogin.setText("Вход");
@@ -208,12 +234,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Выполняется при нажатии на кнопку "Назад"
+     */
     @Override
     public void onBackPressed() {
         //Блокируем "назад"
     }
 
+    /**
+     * Получить mac-адрес утройства
+     * @return mac-адрес утройства
+     */
     public static String getMacAddr() {
         try {
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());

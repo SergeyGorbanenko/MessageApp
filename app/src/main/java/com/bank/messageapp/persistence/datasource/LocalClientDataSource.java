@@ -9,12 +9,19 @@ import java.util.List;
 import io.reactivex.Flowable;
 
 /**
- * Класс локального хранилища клиентов
+ * Класс локального хранилища Клиентов
  */
 public class LocalClientDataSource implements ClientDataSource{
 
+    /**
+     * Поле dao клиентов
+     */
     private final ClientDao mClientDao;
 
+    /**
+     * Создание нового хранилища клиентов
+     * @param ClientDao dao клиентов
+     */
     public LocalClientDataSource(ClientDao ClientDao) {
         this.mClientDao = ClientDao;
     }
@@ -86,6 +93,7 @@ public class LocalClientDataSource implements ClientDataSource{
     /**
      * Получить клиента по номеру телефона
      * @param phone номер телефона
+     * @return клиент
      */
     @Override
     public Client getClientByPhoneNumber(String phone) {

@@ -13,38 +13,63 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 
+/**
+ * интерфейс data access object сущности Сообщение
+ */
 @Dao
 public interface PushMessageDao {
 
-    //1
+    /**
+     * Получить список всех сообщений
+     */
     @Query("SELECT * FROM PushMessage")
     List<PushMessage> getAllPushMessages();
 
-    //2
+    /**
+     * Получить список всех сообщений
+     */
     @Query("SELECT * FROM PushMessage")
     Flowable<List<PushMessage>> getAllPushMessagesFlowable();
 
-    //3
+    /**
+     * Получить сообщение
+     * @param id ид сообщения
+     */
     @Query("SELECT * FROM PushMessage WHERE id_pushmessage = :id LIMIT 1")
     PushMessage getPushMessage(String id);
 
-    //4
+    /**
+     * Вставить сообщения
+     * @param pushMessages сообщения
+     */
     @Insert (onConflict = OnConflictStrategy.REPLACE)
     void insertPushMessages(PushMessage... pushMessages);
 
-    //5
+    /**
+     * Обновить сообщения
+     * @param pushMessage сообщения
+     */
     @Update
     void updatePushMessages(PushMessage... pushMessage);
 
-    //6
+    /**
+     * Удалить все сообщения
+     */
     @Query("DELETE FROM PushMessage")
     void deleteAllPushMessages();
 
-    //7
+    /**
+     * Удалить сообщение
+     * @param pushMessage сообщение
+     */
     @Delete
     void deletePushMessage(PushMessage pushMessage);
 
-    //8
+    /**
+     * Получить сообщения клиента по флагу архивирования
+     * @param arch флаг архивирования
+     * @param id_client ид клиента
+     */
     @Query("SELECT * FROM PushMessage WHERE isarchived_status = :arch AND fk_client = :id_client")
     List<PushMessage> getIsArchivedPushMessagesByClient(Boolean arch, String id_client);
 

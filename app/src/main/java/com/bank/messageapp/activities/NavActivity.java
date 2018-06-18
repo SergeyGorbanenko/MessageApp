@@ -56,35 +56,57 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.bank.messageapp.activities.MainActivity.getMacAddr;
-
+/**
+ * Класс активности навигационного меню
+ */
 public class NavActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    /** Поле локальное хранилище Сообщений */
     private LocalPushMessageDataSource localPushMessageDataSource;
+    /** Поле локальное хранилище Клиентов */
     private LocalClientDataSource localClientDataSource;
+    /** Поле локальное хранилище Сервис данных клиента */
     private LocalClientServiceDataSource localClientServiceDataSource;
 
+    /** Поле сущности Клиент */
     private Client client;
+    /** Поле сущности Сервис данные клиента */
     private ClientServiceData clientServiceData;
 
+    /** Текстовое поле для информации о клиенте */
     private TextView clientHeaderName;
+    /** Текстовое поле для номера мобильного телефона */
     private TextView clientHeaderPhoneNumber;
 
+    /** Макет swipeRefresh */
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    /** Макет relative */
     private RelativeLayout mRelativeContainerForSetting;
 
+    /** Поле списка RecycleView */
     private RecyclerView mRecyclerView;
+    /** Поле адаптера RecycleView */
     private RecyclerView.Adapter mAdapter;
+    /** Поле LayoutManager RecycleView */
     private RecyclerView.LayoutManager mLayoutManager;
 
+    /** Поле сущности Сообщение */
     private PushRequest pushRequest;
+    /** Поле списка сообщений */
     private List<PushMessage> pushMessageList;
 
+    /** Поле экземпляра интерфейса запросов к веб-серверу */
     private MessServerApi messServerApi;
 
+    /** Константа канала уведомлений  */
     public static final String NOTIFICATION_CHANNEL_ID = "4565";
 
+    /** Текстовое поле для пустого списка */
     private TextView textViewEmptyPushList;
 
+    /**
+     * инициализация при создании
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,6 +219,9 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
 
     }
 
+    /**
+     * инициализация при запуске
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -205,7 +230,9 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
             getPushesPeriodic();
     }
 
-
+    /**
+     * Обновить дочерние элементы в макете SwipeRefreshLayout
+     */
     void refreshItems() {
         // Load items
         //if(!clientServiceData.getAutoupdate_push())
@@ -215,6 +242,10 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
         onItemsLoadComplete();
     }
 
+    /**
+     * Выключает анимацию обновления списка сообщений
+     * Выполняется после обновления дочерниих элементов в макете SwipeRefreshLayout
+     */
     void onItemsLoadComplete() {
         // Update the adapter and notify data set changed
         // ...
@@ -224,7 +255,9 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
     }
 
 
-    //Периодический запрос к серверу для получения списка сообщений
+    /**
+     * Периодический запрос к серверу для получения списка сообщений
+     */
     public void getPushesPeriodic() {
         ((MyCustomApplication) this.getApplication()).getmDisposable().clear();
         ((MyCustomApplication) this.getApplication()).getmDisposable().add(
@@ -267,7 +300,10 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
                                 Throwable::printStackTrace));
     }
 
-    //Запрос к серверу для получения списка сообщений
+
+    /**
+     * Запрос к серверу для получения списка сообщений
+     */
     private void getPushes() {
         //выполняем запрос
         Call<List<PushResponse>> getPushes = messServerApi.getPush(pushRequest);
@@ -322,7 +358,9 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
         });
     }
 
-    //Создать канал уведомлений
+    /**
+     * Создать канал уведомлений
+     */
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -339,7 +377,10 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
         }
     }
 
-
+    /**
+     * Скрывает панель навигационого меню, если она открыта
+     * Выполняется при нажатии на кнопку "Назад"
+     */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -350,7 +391,11 @@ public class NavActivity extends AppCompatActivity implements NavigationView.OnN
         }
     }
 
-
+    /**
+     * Переход в активити/фрагмент соответствующий пункту навигационного меню
+     * Выполняется при нажатии на элемент навигационного меню
+     * @param item элемент навигационного меню
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

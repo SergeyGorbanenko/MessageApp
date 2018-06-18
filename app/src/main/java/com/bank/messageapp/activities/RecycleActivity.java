@@ -23,24 +23,34 @@ import com.bank.messageapp.util.RecyclerTouchListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
+/**
+ * Класс активности списка архивных сообщений
+ */
 public class RecycleActivity extends AppCompatActivity {
 
+    /** Поле локальное хранилище Сообщений */
     private LocalPushMessageDataSource localPushMessageDataSource;
+    /** Поле локальное хранилище Клиентов */
     private LocalClientDataSource localClientDataSource;
+    /** Поле локальное хранилище Сервис данных клиента */
     private LocalClientServiceDataSource localClientServiceDataSource;
 
+    /** Поле списка RecycleView */
     private RecyclerView mRecyclerView;
+    /** Поле адаптера RecycleView */
     private RecyclerView.Adapter mAdapter;
+    /** Поле LayoutManager RecycleView */
     private RecyclerView.LayoutManager mLayoutManager;
 
+    /** Поле сущности Клиент */
     private Client client = null;
 
+    /** Поле списка Сообщений */
     private List<PushMessage> pushMessageList;
 
-    //private PushRequest pushRequest;
-    //private MessServerApi messServerApi;
-
+    /**
+     * инициализация при создании
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +111,11 @@ public class RecycleActivity extends AppCompatActivity {
             textViewEmptyArchiveList.setVisibility(View.VISIBLE);
     }
 
-
+    /**
+     * Показать архивные сообщения за последний месяц
+     * Выполняется при нажатии на кнопку "За месяц"
+     * @param v элемент управления - кнопка "За месяц"
+     */
     public void showArchivePushByLastMonth(View v) {
         setTitle("Архив сообщений: за месяц");
         pushMessageList.clear();
@@ -115,6 +129,11 @@ public class RecycleActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Показать архивные сообщения за последнюю неделю
+     * Выполняется при нажатии на кнопку "За неделю"
+     * @param v элемент управления - кнопка "За неделю"
+     */
     public void showArchivePushByLastWeek(View v) {
         setTitle("Архив сообщений: за неделю");
         pushMessageList.clear();
@@ -129,6 +148,11 @@ public class RecycleActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Показать архивные сообщения за текущий день
+     * Выполняется при нажатии на кнопку "Сегодня"
+     * @param v элемент управления - кнопка "Сегодня"
+     */
     public void showArchivePushByToday(View v) {
         setTitle("Архив сообщений: сегодня");
         pushMessageList.clear();
@@ -142,6 +166,11 @@ public class RecycleActivity extends AppCompatActivity {
         mAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Показать все архивные сообщения
+     * Выполняется при нажатии на кнопку "Все"
+     * @param v элемент управления - кнопка "Все"
+     */
     public void showArchivePushByAll(View v) {
         setTitle("Архив сообщений");
         pushMessageList.clear();

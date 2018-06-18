@@ -66,7 +66,7 @@ public class Client {
     }
 
     /**
-     * Задать ид клиета
+     * Задать ид клиента
      * @param id_client ид клиента
      */
     public void setId_client(@NonNull String id_client) {

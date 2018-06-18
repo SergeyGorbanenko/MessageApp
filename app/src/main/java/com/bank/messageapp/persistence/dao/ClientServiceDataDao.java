@@ -11,34 +11,56 @@ import com.bank.messageapp.persistence.entity.ClientServiceData;
 
 import java.util.List;
 
+/**
+ * интерфейс data access object сущности Сервис данные клиента
+ */
 @Dao
 public interface ClientServiceDataDao {
 
-    //1
+    /**
+     * Получить список всех сервис данных клиента
+     */
     @Query("SElECT * FROM clientservicedata")
     List<ClientServiceData> getAllClientsServiceData();
 
-    //2
+    /**
+     * Получить сервис данные клиента
+     * @param id ид сервис данных клиента
+     */
     @Query("SElECT * FROM clientservicedata WHERE id_csd = :id LIMIT 1")
     ClientServiceData getClientServiceData(String id);
 
-    //3
+    /**
+     * Вставить сервис данные клиента
+     * @param clientServiceData сервис данные клиента
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertClientServiceData(ClientServiceData clientServiceData);
 
-    //4
+    /**
+     * Обновить сервис данные клиента
+     * @param clientServiceData сервис данные клиента
+     */
     @Update
     void updateClientServiceData(ClientServiceData clientServiceData);
 
-    //5
+    /**
+     * Удалить все сервис данные клиентов
+     */
     @Query("DELETE FROM clientservicedata")
     void deleteAllClientsServiceData();
 
-    //6
+    /**
+     * Удалить сервис данные клиента
+     * @param clientServiceData сервис данные клиента
+     */
     @Delete
     void deleteClientServiceData(ClientServiceData clientServiceData);
 
-    //7
+    /**
+     * Получить сервис данные клиента по флагу авторизации
+     * @param authorized флаг авторизации
+     */
     @Query("SElECT * FROM clientservicedata WHERE is_authorized = :authorized LIMIT 1")
     ClientServiceData getAuthorizedClientServiceData(Boolean authorized);
 }

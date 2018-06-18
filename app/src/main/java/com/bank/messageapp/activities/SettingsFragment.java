@@ -15,14 +15,23 @@ import com.bank.messageapp.R;
 import com.bank.messageapp.persistence.AppDatabase;
 import com.bank.messageapp.persistence.datasource.LocalClientServiceDataSource;
 import com.bank.messageapp.persistence.entity.ClientServiceData;
-
+/**
+ * Класс фрагмента Настройки
+ */
 public class SettingsFragment extends Fragment {
 
+    /** Поле локальное хранилище Сервис данных клиента */
     private LocalClientServiceDataSource localClientServiceDataSource;
+
+    /** Поле сущности Сервис данные клинета */
     private ClientServiceData clientServiceData;
 
+    /** Поле переключатель */
     private Switch mSwitch;
 
+    /**
+     * инициализация при создании макета Настройки
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
